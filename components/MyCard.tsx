@@ -9,7 +9,7 @@ import PeopleIcon from '@mui/icons-material/People';
 
 interface CardProps {
     card: {
-        id: number,
+        id: string,
         image: string, 
         artist: string,
         location: string,
@@ -27,6 +27,7 @@ export default function MyCard({ card }: CardProps) {
             height="140"
             image={card.image}
             alt="concert image"
+            loading="lazy"
           />
         </Box>
 

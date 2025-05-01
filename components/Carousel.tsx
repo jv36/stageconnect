@@ -1,41 +1,54 @@
 'use client'
 
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useKeenSlider } from "keen-slider/react"
 import "keen-slider/keen-slider.min.css"
 import MyCard from "./MyCard"
+import axios from "axios"
+import { TextField } from "@mui/material" // Import TextField
+import { Button } from "@mui/material"     // Import Button
+import { Alert } from "@mui/material";
 
-const cardData = [
-  {
-    id: 1,
-    image: '/images/concerto.jpg',
-    artist: 'Kendrick Lamar',
-    location: 'Estádio Cidade de Coimbra, Coimbra',
-    date: '02 de Maio de 2025',
-  },
-  {
-    id: 2,
-    image: '/images/concerto.jpg',
-    artist: 'Fontaines D.C.',
-    location: 'Parque da Cidade, Porto',
-    date: '15 de Junho de 2025',
-  },
-  {
-    id: 3,
-    image: '/images/concerto.jpg',
-    artist: 'The Murder Capital',
-    location: 'Auditório CCOP, Porto',
-    date: '20 de Julho de 2025',
-  },
-]
+interface RawConcert {
+  id: string;
+  images: { url: string }[];
+  name: string;
+  _embedded: {
+    venues: { name: string }[];
+  };
+  dates: {
+    start: {
+      localDate: string;
+    };
+  };
+}
 
-/*
-https://app.ticketmaster.com/discovery/v2/events?classificationName=music&countryCode=PT&apikey=
-*/
+interface DisplayConcert {
+  id: string;
+  image: string;
+  artist: string;
+  location: string;
+  date: string;
+}
 
-export default function Carousel() {
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const [loaded, setLoaded] = useState(false)
+async function getConcerts(countryCode: string, page: number = 0, size: number = 10): Promise<RawConcert[]> {
+  try {
+    const apiKey = process.env.NEXT_PUBLIC_TICKETMASTER_API_KEY;
+    const response = await axios.get(
+      `https://app.ticketmaster.com/discovery/v2/events?classificationName=music&countryCode=${countryCode}&page=${page}&size=${size}&apikey=${apiKey}`
+    );
+    return response.data?._embedded?.events || [];
+  } catch (error) {
+    console.error('Error fetching concerts:', error);
+    return [];
+  }
+}
+
+
+export default function Carousel({ countryCode }: { countryCode: string }) { // Receive countryCode as a prop
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [loaded, setLoaded] = useState(false);
+  const [concertData, setConcertData] = useState<DisplayConcert[]>([]);
 
   const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>({
     initial: 0,
@@ -49,19 +62,67 @@ export default function Carousel() {
       perView: 1,
       spacing: 8,
     },
+    renderMode: "performance",
   })
 
-  return (
-    <div className="carousel-wrapper">
-      <div ref={sliderRef} className="keen-slider">
-        {cardData.map((card) => (
-          <div className="keen-slider__slide" key={card.id}>
-            <MyCard card={card} />
-          </div>
-        ))}
-      </div>
+  useEffect(() => {
+    async function fetchInitialConcerts() {
+      const concerts = await getConcerts(countryCode, 0, 10);
+      const formattedConcerts: DisplayConcert[] = concerts.map(concert => ({
+        id: concert.id,
+        image: concert.images?.[0]?.url || '/images/concerto.jpg',
+        artist: concert.name,
+        location: concert._embedded?.venues?.[0]?.name || 'Location not available',
+        date: concert.dates?.start?.localDate || 'Date not available',
+      }));
+      setConcertData(formattedConcerts);
+    }
 
-      {loaded && instanceRef.current && (
+    fetchInitialConcerts();
+  }, [countryCode]);
+
+  useEffect(() => {
+    const preloadImages = async () => {
+      const promises = concertData.map((concert) => {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.src = concert.image;
+          img.onload = resolve;
+          img.onerror = resolve;
+        });
+      });
+  
+      await Promise.all(promises);
+      setLoaded(true);
+    };
+  
+    if (concertData.length > 0) {
+      preloadImages();
+    }
+  }, [concertData]);
+  
+
+  useEffect(() => {
+    if (instanceRef.current) {
+      instanceRef.current.update();
+    }
+  }, [concertData]);  
+
+
+  return (
+    <>
+    <div className="carousel-wrapper min-h-[200px]">
+        <div ref={sliderRef} className="keen-slider">
+          {concertData.map((card) => (
+            <div className="keen-slider__slide" key={card.id}>
+              <MyCard card={card} />
+            </div>
+          ))}
+        </div>
+    </div>
+    
+    {/*
+    loaded && instanceRef.current && instanceRef.current.track.details && concertData.length > 0 && (
         <div className="dots">
           {Array.from({ length: instanceRef.current.track.details.slides.length }).map((_, idx) => (
             <button
@@ -71,7 +132,12 @@ export default function Carousel() {
             ></button>
           ))}
         </div>
-      )}
-    </div>
-  )
+      )
+    */}
+
+  </>
+  );
+
 }
+
+
