@@ -67,7 +67,8 @@ export default function Carousel({ countryCode }: { countryCode: string }) { // 
 
   useEffect(() => {
     async function fetchInitialConcerts() {
-      const concerts = await getConcerts(countryCode, 0, 10);
+      // Number of concerts to fetch
+      const concerts = await getConcerts(countryCode, 0, 5);
       const formattedConcerts: DisplayConcert[] = concerts.map(concert => ({
         id: concert.id,
         image: concert.images?.[0]?.url || '/images/concerto.jpg',
@@ -120,8 +121,8 @@ export default function Carousel({ countryCode }: { countryCode: string }) { // 
           ))}
         </div>
     </div>
-    
-    {/*
+
+    {
     loaded && instanceRef.current && instanceRef.current.track.details && concertData.length > 0 && (
         <div className="dots">
           {Array.from({ length: instanceRef.current.track.details.slides.length }).map((_, idx) => (
@@ -133,7 +134,9 @@ export default function Carousel({ countryCode }: { countryCode: string }) { // 
           ))}
         </div>
       )
-    */}
+    }
+
+    
 
   </>
   );
