@@ -29,13 +29,13 @@ export default function Home() {
   return (
     <div className="grid grid-rows-[auto_1fr_auto] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <div className="flex flex-col sm:flex-row gap-4 items-center row-start-1">
-        <TextField // Use MUI TextField
+        <TextField
           label="Country Code"
           placeholder="e.g., US, CA"
           value={newCountryCode}
           onChange={handleCountryCodeChange}
-          className="w-full sm:w-auto" // Adjust width as needed
-          inputProps={{ maxLength: 2 }} // Set maxLength for the input
+          className="w-full sm:w-auto"
+          inputProps={{ maxLength: 2 }}
           error={!!error}
           helperText={error}
         />
@@ -47,7 +47,7 @@ export default function Home() {
         </Button>
       </div>
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start w-full">
-        <Carousel countryCode={countryCode} /> {/* Pass the countryCode to Carousel */}
+        <Carousel countryCode={countryCode} />
       </main>
     </div>
   );
