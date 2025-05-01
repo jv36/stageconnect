@@ -1,25 +1,35 @@
+// MyCard component
 import * as React from 'react';
+import { useRouter } from 'next/navigation';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import CardActionArea from '@mui/material/CardActionArea';
-import { Box, Chip } from '@mui/material';
-import PeopleIcon from '@mui/icons-material/People';
+import { Box } from '@mui/material';
+import { useEventStore } from '@/store/useEventStore';
 
 interface CardProps {
-    card: {
-        id: string,
-        image: string, 
-        artist: string,
-        location: string,
-        date: string,
-    };
+  card: {
+    id: string;
+    image: string;
+    artist: string;
+    location: string;
+    date: string;
+  };
 }
 
 export default function MyCard({ card }: CardProps) {
+  const router = useRouter();
+  const setSelectedEvent = useEventStore((state) => state.setSelectedEvent);
+
+  const handleCardClick = () => {
+    setSelectedEvent(card);
+    router.push(`/event/${card.id}`);
+  };
+
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card sx={{ maxWidth: 345 }} onClick={handleCardClick}>
       <CardActionArea>
         <Box sx={{ position: 'relative' }}>
           <CardMedia
