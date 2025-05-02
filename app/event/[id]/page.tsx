@@ -4,13 +4,96 @@ import { useEventStore } from '@/store/useEventStore';
 import { useParams } from 'next/navigation';
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, Typography } from '@mui/material';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { createClient } from '@/utils/supabase/client';
+import { useRouter } from 'next/navigation';
+
+
 
 export default function EventPage() {
   const { id } = useParams();
   const event = useEventStore((state) => state.selectedEvent);
+  const supabase = createClient();
+  const router = useRouter();
 
   const [open, setOpen] = useState(false);  // State to control modal visibility
+  const [isGoing, setIsGoing] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [attendanceCount, setAttendanceCount] = useState<number>(0);
+
+
+  const [attendingUsers, setAttendingUsers] = useState<any[]>([]);
+  const [attendanceModalOpen, setAttendanceModalOpen] = useState(false);
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) return;
+
+      setUserId(user.id);
+
+      const { data, error } = await supabase
+        .from('attending')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('event_id', id)
+        .maybeSingle();
+
+      const { count } = await supabase
+          .from('attending')
+          .select('*', { count: 'exact', head: true })
+          .eq('event_id', id);
+
+      setAttendanceCount(count ?? 0);
+
+
+      if (data) setIsGoing(true);
+    };
+    fetchData();
+  }, [id, supabase]);
+
+
+  const fetchAttendingUsers = async () => {
+    const { data, error } = await supabase
+      .from('attending')
+      .select('user_id, users (id, display_name)')
+      .eq('event_id', id);
+  
+    if (error) {
+      console.error('Error fetching attendees:', error);
+      return;
+    }
+  
+    const users = data.map((record) => record.users); // extract users
+    setAttendingUsers(users);
+    setAttendanceModalOpen(true);
+  };
+  
+
+  const toggleGoing = async () => {
+    if (!userId) return;
+
+    if (isGoing) {
+      // Remove attendance
+      await supabase
+        .from('attending')
+        .delete()
+        .eq('user_id', userId)
+        .eq('event_id', id);
+      setIsGoing(false);
+    } else {
+      // Add attendance
+      await supabase.from('attending').insert({
+        user_id: userId,
+        event_id: id,
+      });
+      setIsGoing(true);
+    }
+  };
 
   if (!event) {
     return <p>Loading or no event data available.</p>;
@@ -48,13 +131,18 @@ export default function EventPage() {
             {event.location}
           </Typography>
         </Box>
-        <Stack padding={2} borderRadius={2} bgcolor="teal">
-          <Typography>12 people are going</Typography>
-
-
+        <Stack>
+          <Button
+            variant='contained'
+            onClick={fetchAttendingUsers}
+          >
+            {attendanceCount} people are going
+          </Button>
         </Stack>
         <Stack display="flex" flexDirection="row">
-          <Button>I'M GOING!</Button>
+          <Button variant="contained" color={isGoing ? 'error' : 'primary'} onClick={toggleGoing}>
+              {isGoing ? "I'M NOT GOING" : "I'M GOING!"}
+          </Button>
           <Button>GROUP CHAT</Button>
           <Button onClick={handleSeatmap}>SEATMAP</Button>
         </Stack>
@@ -64,7 +152,7 @@ export default function EventPage() {
       <Dialog open={open} onClose={handleClose}>
         <DialogContent>
           <Image
-            src={event.seatmap}  // Use a placeholder if no seatmap
+            src={event.seatmap}
             alt="Seatmap"
             width={600}
             height={400}
@@ -76,6 +164,27 @@ export default function EventPage() {
           />
         </DialogContent>
       </Dialog>
+
+      <Dialog open={attendanceModalOpen} onClose={() => setAttendanceModalOpen(false)}>
+        <DialogTitle>People Going</DialogTitle>
+        <DialogContent>
+          <Stack spacing={2}>
+            {attendingUsers.map((user) => (
+              <Button
+                key={user.id}
+                variant="text"
+                onClick={() => router.push(`/user/${user.id}`)}
+              >
+                {user.display_name || user.id}
+              </Button>
+            ))}
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setAttendanceModalOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
+
     </div>
   );
 }
