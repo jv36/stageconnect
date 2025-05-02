@@ -1,19 +1,30 @@
 'use client'
 
 import * as React from 'react';
+import { useRouter } from 'next/navigation';
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
-import FolderIcon from '@mui/icons-material/Folder';
-import RestoreIcon from '@mui/icons-material/Restore';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
+import HomeIcon from '@mui/icons-material/Home';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import { useEffect } from 'react';
 
 export default function BottomNav() {
-  const [value, setValue] = React.useState('recents');
+  const [value, setValue] = React.useState('/');
+  const router = useRouter();
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
+    router.push(`/${newValue === '' ? '' : newValue}`);
   };
+  
+  /*
+  useEffect(() => {
+    router.prefetch('/private');
+    router.prefetch('/favorites');
+  }, []);
+  */
+  
 
   return (
     <div style={{
@@ -30,10 +41,9 @@ export default function BottomNav() {
         value={value}
         onChange={handleChange}
       >
-        <BottomNavigationAction label="Recents" value="recents" icon={<RestoreIcon />} />
-        <BottomNavigationAction label="Favorites" value="favorites" icon={<FavoriteIcon />} />
-        <BottomNavigationAction label="Nearby" value="nearby" icon={<LocationOnIcon />} />
-        <BottomNavigationAction label="Folder" value="folder" icon={<FolderIcon />} />
+        <BottomNavigationAction label="Home" value="" icon={<HomeIcon />} />
+        <BottomNavigationAction label="My Concerts" value="favorites" icon={<FavoriteIcon />} />
+        <BottomNavigationAction label="Profile" value="private" icon={<AccountBoxIcon />} />
       </BottomNavigation>
     </div>
   );

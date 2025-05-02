@@ -86,14 +86,23 @@ export default function EventPage() {
         .eq('event_id', id);
       setIsGoing(false);
     } else {
-      // Add attendance
-      await supabase.from('attending').insert({
+      const {error} = await supabase.from('attending').insert({
         user_id: userId,
         event_id: id,
+        event_name: event?.artist,
+        event_location: event?.location,
+        event_date: event?.date,
+        event_image: event?.image
       });
+      if (error) {
+        console.error('Insert error:', error.message);
+      }
+      
       setIsGoing(true);
     }
   };
+
+
 
   if (!event) {
     return <p>Loading or no event data available.</p>;

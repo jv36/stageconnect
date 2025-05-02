@@ -1,53 +1,24 @@
 'use client'
-
 import Carousel from "@/components/Carousel";
 import MyCard from "@/components/MyCard";
-import { Button, TextField } from "@mui/material";
-import Image from "next/image";
-import { useState } from "react";
+import allCountryCodes from "@/utils/countryCodes";
+import { useSearchParams } from "next/navigation";
 
 export default function Home() {
-  const [countryCode, setCountryCode] = useState('CZ'); // Default country code
-  const [newCountryCode, setNewCountryCode] = useState('CZ');
-  const [error, setError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const countryParam = searchParams.get('country');
 
-
-  const handleCountryCodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewCountryCode(event.target.value.toUpperCase()); // Convert to uppercase
-    setError(null); // Clear any previous error
-  };
-
-  const handleSearch = () => {
-    if (newCountryCode.length === 2) {
-      setCountryCode(newCountryCode); // Update the country code
-    } else {
-      setError("Please enter a valid two-letter country code.");
-    }
-  };
-
+  // Determine the country code directly from the URL parameter,
+  // defaulting to 'CZ' if no valid parameter is found.
+  const currentCountryCode: string =
+    countryParam && allCountryCodes.some(c => c.code === countryParam)
+      ? countryParam
+      : 'CZ';
 
   return (
     <div className="grid grid-rows-[auto_1fr_auto] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <div className="flex flex-col sm:flex-row gap-4 items-center row-start-1">
-        <TextField
-          label="Country Code"
-          placeholder="e.g., US, CA"
-          value={newCountryCode}
-          onChange={handleCountryCodeChange}
-          className="w-full sm:w-auto"
-          inputProps={{ maxLength: 2 }}
-          error={!!error}
-          helperText={error}
-        />
-        <Button // Use MUI Button
-          variant="contained"
-          onClick={handleSearch}
-        >
-          Search
-        </Button>
-      </div>
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start w-full">
-        <Carousel countryCode={countryCode} />
+        <Carousel countryCode={currentCountryCode} />
       </main>
     </div>
   );

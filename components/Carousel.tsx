@@ -80,7 +80,7 @@ export default function Carousel({ countryCode }: { countryCode: string }) { // 
         artist: concert.name,
         location: concert._embedded?.venues?.[0]?.name || 'Location not available',
         date: concert.dates?.start?.localDate || 'Date not available',
-        seatmap: concert.seatmap.staticUrl
+        seatmap: concert.seatmap?.staticUrl || '/images/seatmap.jpg'
       }));
       setConcertData(formattedConcerts);
     }

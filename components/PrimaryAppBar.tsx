@@ -1,16 +1,16 @@
 'use client'
 import * as React from 'react';
-import { styled, alpha } from '@mui/material/styles';
+import { alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import InputBase from '@mui/material/InputBase';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
 import Badge from '@mui/material/Badge';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MailIcon from '@mui/icons-material/Mail';
@@ -18,52 +18,23 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import { logout } from '@/app/login/actions';
 import { useRouter } from 'next/navigation';
+import allCountryCodes from '@/utils/countryCodes';
+import LogoutIcon from '@mui/icons-material/Logout';
 
-const Search = styled('div')(({ theme }) => ({
-  position: 'relative',
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(3),
-    width: 'auto',
-  },
-}));
-
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: '100%',
-  position: 'absolute',
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
-  '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('md')]: {
-      width: '20ch',
-    },
-  },
-}));
+// Define the CountryOption interface
+interface CountryOption {
+  name: string;
+  code: string;
+}
 
 export default function PrimaryAppBar() {
   const router = useRouter();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
     React.useState<null | HTMLElement>(null);
+  const [selectedCountry, setSelectedCountry] = React.useState<CountryOption | null>(
+    allCountryCodes.find(c => c.code === 'CZ') || null
+  );
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -88,7 +59,29 @@ export default function PrimaryAppBar() {
   const handleProfileClick = () => {
     router.push("/private");
     handleMenuClose();
-  }
+  };
+
+  const handleSearch = (
+    event: React.SyntheticEvent, 
+    value: CountryOption | null
+  ) => {
+    if (value && value.code) {
+      // Navigate to the home page with the country code
+      router.push(`/?country=${value.code}`);
+    }
+  };
+
+  // Handle when user presses Enter in the search field
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' && selectedCountry?.code) {
+      router.push(`/?country=${selectedCountry.code}`);
+    }
+  };
+
+  // Handle app title click to go back to home
+  const handleTitleClick = () => {
+    router.push('/');
+  };
 
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
@@ -108,7 +101,7 @@ export default function PrimaryAppBar() {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleProfileClick}>Profile</MenuItem>
-      <MenuItem onClick={logout}>Sign Out</MenuItem>
+      <MenuItem onClick={logout}>Logout</MenuItem>
     </Menu>
   );
 
@@ -129,71 +122,119 @@ export default function PrimaryAppBar() {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem>
-        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} color="error">
-            <MailIcon />
-          </Badge>
-        </IconButton>
-        <p>Messages</p>
-      </MenuItem>
-      <MenuItem>
-        <IconButton
-          size="large"
-          aria-label="show 17 new notifications"
-          color="inherit"
-        >
-          <Badge badgeContent={17} color="error">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        <p>Notifications</p>
-      </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
+      <MenuItem onClick={() => {
+        handleMobileMenuClose();
+        router.push('/private');
+      }}>
         <IconButton
           size="large"
           aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
           color="inherit"
         >
           <AccountCircle />
         </IconButton>
         <p>Profile</p>
       </MenuItem>
+            <MenuItem onClick={logout}>
+        <IconButton
+          size="large"
+          aria-label="account of current user"
+          color="inherit"
+        >
+          <LogoutIcon />
+        </IconButton>
+        <p>Logout</p>
+      </MenuItem>
     </Menu>
   );
+  
 
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
           <Typography
             variant="h6"
             noWrap
             component="div"
-            sx={{ display: { xs: 'none', sm: 'block' } }}
+            sx={{ display: { xs: 'none', sm: 'block' }, cursor: 'pointer' }}
+            onClick={handleTitleClick}
           >
             StageConnect
           </Typography>
-          <Search>
-            <SearchIconWrapper>
+          <Box
+            sx={{
+              position: 'relative',
+              borderRadius: 1,
+              backgroundColor: (theme) => alpha(theme.palette.common.white, 0.15),
+              '&:hover': {
+                backgroundColor: (theme) => alpha(theme.palette.common.white, 0.25),
+              },
+              marginRight: 2,
+              marginLeft: 0,
+              width: '100%',
+            }}
+          >
+            <Box
+              sx={{
+                padding: '0 16px',
+                height: '100%',
+                position: 'absolute',
+                pointerEvents: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 1,
+              }}
+            >
               <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
+            </Box>
+            <Autocomplete<CountryOption, false, false, false>
+              options={allCountryCodes as CountryOption[]}
+              getOptionLabel={(option: CountryOption) => `${option.name} (${option.code})`}
+              value={selectedCountry}
+              onChange={(event, newValue: CountryOption | null) => {
+                setSelectedCountry(newValue);
+                handleSearch(event, newValue);
+              }}
+              onKeyDown={handleKeyDown}
+              sx={{
+                color: 'inherit',
+                width: '100%',
+                '& .MuiInputBase-root': {
+                  color: 'inherit',
+                  padding: '8px 8px 8px 0',
+                  paddingLeft: 'calc(1em + 32px)',
+                  transition: (theme) => theme.transitions.create('width'),
+                  width: '100%',
+                },
+                '& .MuiOutlinedInput-notchedOutline': {
+                  border: 'none',
+                },
+                '& .MuiAutocomplete-endAdornment': {
+                  display: 'none', // Hide the dropdown arrow
+                },
+                '& .MuiInputLabel-root': {
+                  color: (theme) => alpha(theme.palette.common.white, 0.7),
+                },
+                '& .MuiInputBase-input::placeholder': {
+                  color: (theme) => alpha(theme.palette.common.white, 0.7),
+                  opacity: 1,
+                },
+              }}
+              renderInput={(params) => (
+                <TextField 
+                  {...params} 
+                  placeholder="Search for a country…"
+                  variant="outlined"
+                  InputProps={{
+                    ...params.InputProps,
+                    'aria-label': 'search',
+                  }}
+                />
+              )}
             />
-          </Search>
+          </Box>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
             <IconButton size="large" aria-label="show 4 new mails" color="inherit">
