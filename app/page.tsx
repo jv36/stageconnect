@@ -9,10 +9,11 @@ function LoadingCarousel() {
   return <div>Loading concerts...</div>; // Simple loading indicator
 }
 
-export default function Home() {
+// Create a client component that uses useSearchParams
+function HomeContent() {
   const searchParams = useSearchParams();
   const countryParam = searchParams.get('country');
-  const currentCountryCode: string =
+  const currentCountryCode = 
     countryParam && allCountryCodes.some(c => c.code === countryParam)
       ? countryParam
       : 'CZ';
@@ -41,5 +42,14 @@ export default function Home() {
         </Suspense>
       </main>
     </div>
+  );
+}
+
+// Main component wraps the component that uses useSearchParams with Suspense
+export default function Home() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomeContent />
+    </Suspense>
   );
 }
