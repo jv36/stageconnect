@@ -4,22 +4,8 @@ import { Avatar, Box, Button, Stack, Typography } from '@mui/material'
 import XIcon from '@mui/icons-material/X';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import FacebookIcon from '@mui/icons-material/Facebook';
-import { Metadata } from 'next';
 
-
-
-type Props = {
-    params: { id: string };
-  };
-  
-  export async function generateMetadata({ params }: Props): Promise<Metadata> {
-    return {
-      title: `User Profile: ${params.id}`,
-    };
-  }
-
-
-export default async function UserProfilePage({ params }: Props) {
+export default async function UserProfilePage({ params }: { params: { id: string } }) {
   const supabase = createClient()
 
   // Query the public metadata of a user by ID
