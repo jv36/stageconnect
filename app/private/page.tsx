@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 import {
-  Avatar, Box, Button, Typography, Modal, TextField, Stack
+  Avatar, Box, Button, Typography, Modal, TextField, Stack,
+  IconButton
 } from '@mui/material'
 import { User } from '@supabase/supabase-js'
 import XIcon from '@mui/icons-material/X';
@@ -80,41 +81,34 @@ export default function PrivatePage() {
             {user.user_metadata?.description || "No description added."}
           </Typography>
         </Box>
-        <Stack>
-            {twitter && (
-              <Button
-                href={`https://x.com/${twitter}`}
-                target="_blank"
-                startIcon={<XIcon />}
-                variant="outlined"
-                sx={{ marginRight: 1 }}
+        <Stack direction="row" spacing={1}>
+          {twitter && (
+              <IconButton
+                  href={`https://x.com/${twitter}`}
+                  target="_blank"
               >
-                Twitter
-              </Button>
-            )}
-            {instagram && (
-              <Button
-                href={`https://instagram.com/${instagram}`}
-                target="_blank"
-                startIcon={<InstagramIcon />}
-                variant="outlined"
-                sx={{ marginRight: 1 }}
+                  <XIcon sx={{fontSize: 30, color: '#1B003A'}}/>
+              </IconButton>
+          )}
+          {instagram && (
+              <IconButton
+                  href={`https://instagram.com/${instagram}`}
+                  target="_blank"
+
               >
-                Instagram
-              </Button>
-            )}
-            {facebook && (
-              <Button
-                href={`https://facebook.com/${facebook}`}
-                target="_blank"
-                startIcon={<FacebookIcon />}
-                variant="outlined"
-                sx={{ marginRight: 1 }}
+                  <InstagramIcon sx={{fontSize: 30, color: '#1B003A'}}/>
+              </IconButton>
+          )}
+          {facebook && (
+              <IconButton
+                  href={`https://facebook.com/${facebook}`}
+                  target="_blank"
+
               >
-                Facebook
-              </Button>
-            )}
-        </Stack>
+                  <FacebookIcon sx={{fontSize: 30, color: '#1B003A'}}/>
+              </IconButton>
+          )}
+      </Stack>
         <Button variant="contained" onClick={() => setOpen(true)}>EDIT</Button>
 
         <Modal open={open} onClose={() => setOpen(false)}>

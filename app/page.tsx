@@ -6,10 +6,9 @@ import { useSearchParams } from "next/navigation";
 import { Suspense } from 'react';
 
 function LoadingCarousel() {
-  return <div>Loading concerts...</div>; // Simple loading indicator
+  return <div>Loading concerts...</div>;
 }
 
-// Create a client component that uses useSearchParams
 function HomeContent() {
   const searchParams = useSearchParams();
   const countryParam = searchParams.get('country');
@@ -45,7 +44,6 @@ function HomeContent() {
   );
 }
 
-// Main component wraps the component that uses useSearchParams with Suspense
 export default function Home() {
   return (
     <Suspense fallback={<div>Loading...</div>}>

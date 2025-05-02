@@ -62,7 +62,7 @@ export default function FavoritesPage() {
     <div className="grid grid-rows-[auto_1fr_auto] items-center min-h-screen p-8 gap-16 sm:p-20 font-[family-name:var(--font-roboto-condensed)]">
       <main className="flex flex-col gap-8 w-full max-w-[800px] mx-auto items-center">
         {events.length > 0 ? (
-          <Stack direction="row" flexWrap="wrap" justifyContent="center">
+          <Stack direction="row" flexWrap="wrap" justifyContent="center" gap={3}>
             {events.map((event) => (
               <MyCard
                 key={event.event_id}
