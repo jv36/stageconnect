@@ -1,22 +1,28 @@
-import { createClient } from '@/utils/supabase/server'
-import { notFound } from 'next/navigation'
-import { Avatar, Box, Button, Stack, Typography } from '@mui/material'
+import { createClient } from '@/utils/supabase/server';
+import { notFound } from 'next/navigation';
+import { Avatar, Box, Button, Stack, Typography } from '@mui/material';
 import XIcon from '@mui/icons-material/X';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import FacebookIcon from '@mui/icons-material/Facebook';
 
-export default async function UserProfilePage({ params }: { params: { id: string } }) {
-  const supabase = await createClient()
+interface PageProps {
+    params: {
+      id: string
+    }
+}
+
+export default async function UserProfilePage({ params }: PageProps) {
+  const supabase = await createClient();
 
   // Query the public metadata of a user by ID
-  const { data, error } = await supabase // Removed the extra 'await' here
-    .from('users') // assumes you mirror Supabase auth users into your own `users` table
+  const { data, error } = await supabase
+    .from('users')
     .select('id, email, display_name, description, twitter, instagram, facebook')
     .eq('id', params.id)
-    .single()
+    .single();
 
   if (error || !data) {
-    return notFound()
+    return notFound();
   }
 
   return (
@@ -30,41 +36,41 @@ export default async function UserProfilePage({ params }: { params: { id: string
           </Typography>
         </Box>
         <Stack>
-            {data.twitter && (
-              <Button
-                href={`https://x.com/${data.twitter}`}
-                target="_blank"
-                startIcon={<XIcon />}
-                variant="outlined"
-                sx={{ marginRight: 1 }}
-              >
-                Twitter
-              </Button>
-            )}
-            {data.instagram && (
-              <Button
-                href={`https://instagram.com/${data.instagram}`}
-                target="_blank"
-                startIcon={<InstagramIcon />}
-                variant="outlined"
-                sx={{ marginRight: 1 }}
-              >
-                Instagram
-              </Button>
-            )}
-            {data.facebook && (
-              <Button
-                href={`https://facebook.com/${data.facebook}`}
-                target="_blank"
-                startIcon={<FacebookIcon />}
-                variant="outlined"
-                sx={{ marginRight: 1 }}
-              >
-                Facebook
-              </Button>
-            )}
+          {data.twitter && (
+            <Button
+              href={`https://x.com/${data.twitter}`}
+              target="_blank"
+              startIcon={<XIcon />}
+              variant="outlined"
+              sx={{ marginRight: 1 }}
+            >
+              Twitter
+            </Button>
+          )}
+          {data.instagram && (
+            <Button
+              href={`https://instagram.com/${data.instagram}`}
+              target="_blank"
+              startIcon={<InstagramIcon />}
+              variant="outlined"
+              sx={{ marginRight: 1 }}
+            >
+              Instagram
+            </Button>
+          )}
+          {data.facebook && (
+            <Button
+              href={`https://facebook.com/${data.facebook}`}
+              target="_blank"
+              startIcon={<FacebookIcon />}
+              variant="outlined"
+              sx={{ marginRight: 1 }}
+            >
+              Facebook
+            </Button>
+          )}
         </Stack>
       </main>
     </div>
-  )
+  );
 }
