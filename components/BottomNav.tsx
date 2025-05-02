@@ -34,16 +34,32 @@ export default function BottomNav() {
       width: '100%',
       zIndex: 1000,
       borderTop: '1px solid #ddd',
-      backgroundColor: '#fff'
+      backgroundColor: '#1b003a'
     }}>
       <BottomNavigation
-        sx={{ width: '100%' }}
+        sx={{ width: '100%', backgroundColor: '#1b003a'}}
         value={value}
         onChange={handleChange}
+        color='primary'
       >
-        <BottomNavigationAction label="Home" value="" icon={<HomeIcon />} />
-        <BottomNavigationAction label="My Concerts" value="favorites" icon={<FavoriteIcon />} />
-        <BottomNavigationAction label="Profile" value="private" icon={<AccountBoxIcon />} />
+        <BottomNavigationAction label="Home" value="" icon={<HomeIcon />} sx={{
+            color: 'secondary.main',
+            '&.Mui-selected': {
+              color: 'primary.contrastText', // color for selected
+            },
+          }}/>
+        <BottomNavigationAction sx={{
+            color: 'secondary.main',
+            '&.Mui-selected': {
+              color: 'primary.contrastText', // color for selected
+            },
+          }} label="My Concerts" value="favorites" icon={<FavoriteIcon />} />
+        <BottomNavigationAction sx={{
+            color: 'secondary.main',
+            '&.Mui-selected': {
+              color: 'primary.contrastText', // color for selected
+            },
+          }} label="Profile" value="private" icon={<AccountBoxIcon />} />
       </BottomNavigation>
     </div>
   );

@@ -99,6 +99,7 @@ export default function PrimaryAppBar() {
       }}
       open={isMenuOpen}
       onClose={handleMenuClose}
+      color='secondary'
     >
       <MenuItem onClick={handleProfileClick}>Profile</MenuItem>
       <MenuItem onClick={logout}>Logout</MenuItem>
@@ -108,6 +109,7 @@ export default function PrimaryAppBar() {
   const mobileMenuId = 'primary-search-account-menu-mobile';
   const renderMobileMenu = (
     <Menu
+      color='secondary'
       anchorEl={mobileMoreAnchorEl}
       anchorOrigin={{
         vertical: 'top',
@@ -121,6 +123,7 @@ export default function PrimaryAppBar() {
       }}
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
+
     >
       <MenuItem onClick={() => {
         handleMobileMenuClose();
@@ -151,13 +154,14 @@ export default function PrimaryAppBar() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar position="static" color="primary">
         <Toolbar>
           <Typography
             variant="h6"
             noWrap
             component="div"
             sx={{ display: { xs: 'none', sm: 'block' }, cursor: 'pointer' }}
+            color='secondary'
             onClick={handleTitleClick}
           >
             StageConnect
@@ -166,10 +170,6 @@ export default function PrimaryAppBar() {
             sx={{
               position: 'relative',
               borderRadius: 1,
-              backgroundColor: (theme) => alpha(theme.palette.common.white, 0.15),
-              '&:hover': {
-                backgroundColor: (theme) => alpha(theme.palette.common.white, 0.25),
-              },
               marginRight: 2,
               marginLeft: 0,
               width: '100%',
@@ -187,7 +187,7 @@ export default function PrimaryAppBar() {
                 zIndex: 1,
               }}
             >
-              <SearchIcon />
+              <SearchIcon color='secondary'/>
             </Box>
             <Autocomplete<CountryOption, false, false, false>
               options={allCountryCodes as CountryOption[]}
@@ -198,14 +198,14 @@ export default function PrimaryAppBar() {
                 handleSearch(event, newValue);
               }}
               onKeyDown={handleKeyDown}
-              sx={{
-                color: 'inherit',
+              sx={(theme) => ({
+                color: theme.palette.secondary.main,
                 width: '100%',
                 '& .MuiInputBase-root': {
-                  color: 'inherit',
+                  color: theme.palette.secondary.main,
                   padding: '8px 8px 8px 0',
                   paddingLeft: 'calc(1em + 32px)',
-                  transition: (theme) => theme.transitions.create('width'),
+                  transition: theme.transitions.create('width'),
                   width: '100%',
                 },
                 '& .MuiOutlinedInput-notchedOutline': {
@@ -215,13 +215,13 @@ export default function PrimaryAppBar() {
                   display: 'none', // Hide the dropdown arrow
                 },
                 '& .MuiInputLabel-root': {
-                  color: (theme) => alpha(theme.palette.common.white, 0.7),
+                  color: alpha(theme.palette.secondary.main, 0.7),
                 },
                 '& .MuiInputBase-input::placeholder': {
-                  color: (theme) => alpha(theme.palette.common.white, 0.7),
+                  color: alpha(theme.palette.secondary.main, 0.7),
                   opacity: 1,
                 },
-              }}
+              })}
               renderInput={(params) => (
                 <TextField 
                   {...params} 
@@ -237,20 +237,6 @@ export default function PrimaryAppBar() {
           </Box>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-              <Badge badgeContent={4} color="error">
-                <MailIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              size="large"
-              aria-label="show 17 new notifications"
-              color="inherit"
-            >
-              <Badge badgeContent={17} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
             <IconButton
               size="large"
               edge="end"
@@ -270,7 +256,7 @@ export default function PrimaryAppBar() {
               aria-controls={mobileMenuId}
               aria-haspopup="true"
               onClick={handleMobileMenuOpen}
-              color="inherit"
+              color="secondary"
             >
               <MoreIcon />
             </IconButton>

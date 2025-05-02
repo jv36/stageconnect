@@ -1,13 +1,12 @@
-'use client'
+'use client';
 
-import React, { useEffect, useState } from "react"
-import { useKeenSlider } from "keen-slider/react"
-import "keen-slider/keen-slider.min.css"
-import MyCard from "./MyCard"
-import axios from "axios"
-import { TextField } from "@mui/material" // Import TextField
-import { Button } from "@mui/material"     // Import Button
-import { Alert } from "@mui/material";
+import React, { useEffect, useState } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import MyCard from './MyCard';
+import axios from 'axios';
 
 interface RawConcert {
   id: string;
@@ -23,7 +22,7 @@ interface RawConcert {
   };
   seatmap: {
     staticUrl: string;
-  }
+  };
 }
 
 interface DisplayConcert {
@@ -41,7 +40,7 @@ async function getConcerts(countryCode: string, page: number = 0, size: number =
     const response = await axios.get(
       `https://app.ticketmaster.com/discovery/v2/events?classificationName=music&countryCode=${countryCode}&page=${page}&size=${size}&apikey=${apiKey}`
     );
-    console.log("data", response.data?._embedded?.events);
+    console.log('data', response.data?._embedded?.events);
     return response.data?._embedded?.events || [];
   } catch (error) {
     console.error('Error fetching concerts:', error);
@@ -49,38 +48,20 @@ async function getConcerts(countryCode: string, page: number = 0, size: number =
   }
 }
 
-
-export default function Carousel({ countryCode }: { countryCode: string }) { // Receive countryCode as a prop
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [loaded, setLoaded] = useState(false);
+export default function SliderCarousel({ countryCode }: { countryCode: string }) {
   const [concertData, setConcertData] = useState<DisplayConcert[]>([]);
-
-  const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>({
-    initial: 0,
-    slideChanged(slider) {
-      setCurrentSlide(slider.track.details.rel)
-    },
-    created() {
-      setLoaded(true)
-    },
-    slides: {
-      perView: 1,
-      spacing: 8,
-    },
-    renderMode: "performance",
-  })
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     async function fetchInitialConcerts() {
-      // Number of concerts to fetch
       const concerts = await getConcerts(countryCode, 0, 5);
-      const formattedConcerts: DisplayConcert[] = concerts.map(concert => ({
+      const formattedConcerts: DisplayConcert[] = concerts.map((concert) => ({
         id: concert.id,
         image: concert.images?.[0]?.url || '/images/concerto.jpg',
         artist: concert.name,
         location: concert._embedded?.venues?.[0]?.name || 'Location not available',
         date: concert.dates?.start?.localDate || 'Date not available',
-        seatmap: concert.seatmap?.staticUrl || '/images/seatmap.jpg'
+        seatmap: concert.seatmap?.staticUrl || '/images/seatmap.jpg',
       }));
       setConcertData(formattedConcerts);
     }
@@ -98,55 +79,46 @@ export default function Carousel({ countryCode }: { countryCode: string }) { // 
           img.onerror = resolve;
         });
       });
-  
+
       await Promise.all(promises);
-      setLoaded(true);
+      setIsLoaded(true);
     };
-  
+
     if (concertData.length > 0) {
       preloadImages();
     }
   }, [concertData]);
-  
-
-  useEffect(() => {
-    if (instanceRef.current) {
-      instanceRef.current.update();
-    }
-  }, [concertData]);  
-
 
   return (
-    <>
     <div className="carousel-wrapper min-h-[200px]">
-        <div ref={sliderRef} className="keen-slider">
+      {isLoaded && concertData.length > 0 ? (
+        <Swiper
+          slidesPerView={1}
+          spaceBetween={8}
+          navigation={false}
+          pagination={{
+            clickable: true,
+            renderBullet: (index, className) => `<span class="${className} custom-swiper-bullet"></span>`,
+          }}
+          modules={[Pagination]}
+          className="!overflow-visible"
+        >
           {concertData.map((card) => (
-            <div className="keen-slider__slide" key={card.id}>
-              <MyCard card={card} />
-            </div>
+            <SwiperSlide
+              key={card.id}
+              className="relative pb-8 flex items-center justify-center"
+              style={{ minHeight: 'auto' }}
+            >
+              <div style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '0' }}>
+                <MyCard card={card} />
+              </div>
+              <div className="swiper-pagination absolute bottom-0 left-0 w-full flex justify-center items-center"></div>
+            </SwiperSlide>
           ))}
-        </div>
+        </Swiper>
+      ) : (
+        <p>Loading concerts...</p>
+      )}
     </div>
-
-    {
-    loaded && instanceRef.current && instanceRef.current.track.details && concertData.length > 0 && (
-        <div className="dots">
-          {Array.from({ length: instanceRef.current.track.details.slides.length }).map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => instanceRef.current?.moveToIdx(idx)}
-              className={"dot" + (currentSlide === idx ? " active" : "")}
-            ></button>
-          ))}
-        </div>
-      )
-    }
-
-    
-
-  </>
   );
-
 }
-
-

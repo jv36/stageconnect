@@ -2,6 +2,7 @@
 import Carousel from "@/components/Carousel";
 import MyCard from "@/components/MyCard";
 import allCountryCodes from "@/utils/countryCodes";
+import { Typography } from "@mui/material";
 import { useSearchParams } from "next/navigation";
 
 export default function Home() {
@@ -16,8 +17,18 @@ export default function Home() {
       : 'CZ';
 
   return (
-    <div className="grid grid-rows-[auto_1fr_auto] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+    <div className="grid grid-rows-[auto_1fr_auto] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-roboto-condensed)]">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start w-full">
+        <Typography variant="h5" color="primary" fontWeight={600}>Popular in {currentCountryCode}</Typography>
+        <Carousel countryCode={currentCountryCode} />
+
+        <Typography variant="h5" color="primary" fontWeight={600}>Fancy a Pop concert?</Typography>
+        <Carousel countryCode={currentCountryCode} />
+
+        <Typography variant="h5" color="primary" fontWeight={600} >Global Stars</Typography>
+        <Carousel countryCode={currentCountryCode} />
+
+        <Typography variant="h5" color="primary" fontWeight={600}>Big Venues</Typography>
         <Carousel countryCode={currentCountryCode} />
       </main>
     </div>

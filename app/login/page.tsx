@@ -21,7 +21,7 @@ export default function LoginPage() {
   )
 
   return (
-<div className="grid grid-rows-[auto_1fr_auto] items-center justify-center min-h-screen p-8 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+<div className="grid grid-rows-[auto_1fr_auto] items-center justify-center min-h-screen p-8 gap-16 sm:p-20 font-[family-name:var(--font-roboto-condensed)]">
   <main className="flex flex-col gap-8 w-full max-w-[600px] mx-auto items-center">
     <Typography variant="h4" fontWeight={600}>Welcome to StageConnect!</Typography>
     <Typography fontSize={16} fontWeight={500}>Ready to connect? Create or login to your account!</Typography>

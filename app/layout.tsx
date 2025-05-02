@@ -1,38 +1,29 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import PrimaryAppBar from "@/components/PrimaryAppBar";
-import BottomNav from "@/components/BottomNav";
+import type { Metadata } from 'next'
+import { Geist, Geist_Mono, Roboto_Condensed } from 'next/font/google'
+import './globals.css'
+import ThemeRegistry from '@/components/ThemeRegistry'
+import PrimaryAppBar from '@/components/PrimaryAppBar'
+import BottomNav from '@/components/BottomNav'
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
+const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] })
+const robotoCondensed = Roboto_Condensed({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "StageConnect",
-  description: "Ready to get connected?",
-};
+  title: 'StageConnect',
+  description: 'Ready to get connected?',
+}
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en" className={`${robotoCondensed.className}`}>
       <body className="antialiased flex flex-col min-h-screen">
+        <ThemeRegistry>
           <PrimaryAppBar />
           <main className="flex-grow">{children}</main>
           <BottomNav />
+        </ThemeRegistry>
       </body>
     </html>
-  );
+  )
 }
-
-

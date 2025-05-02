@@ -70,7 +70,7 @@ export default function PrivatePage() {
   if (!user) return null
 
   return (
-    <div className="grid grid-rows-[auto_1fr_auto] items-center min-h-screen p-8 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+    <div className="grid grid-rows-[auto_1fr_auto] items-center min-h-screen p-8 gap-16 sm:p-20 font-[family-name:var(--font-roboto-condensed)]">
       <main className="flex flex-col gap-8 w-full max-w-[600px] mx-auto items-center">
         <Avatar sx={{ width: 150, height: 150 }} alt={user.user_metadata?.display_name} />
         <Box textAlign="center">

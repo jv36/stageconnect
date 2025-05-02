@@ -2,7 +2,7 @@
 
 import { useEventStore } from '@/store/useEventStore';
 import { useParams } from 'next/navigation';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, Typography } from '@mui/material';
+import { Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, Typography } from '@mui/material';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
@@ -117,9 +117,8 @@ export default function EventPage() {
   };
 
   return (
-    <div className="grid grid-rows-[auto_1fr_auto] items-start min-h-screen p-8 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 w-full max-w-[600px] mx-auto items-start">
-        <Typography variant='h4' fontWeight={600}>{event.artist}</Typography>
+    <div className="grid grid-rows-[auto_1fr_auto] items-center min-h-screen p-8 gap-16 sm:p-20 font-[family-name:var(--font-roboto-condensed)]">
+      <main className="flex flex-col gap-8 w-full max-w-[600px] mx-auto items-center">
         <Image
           src={event.image}
           alt={event.artist}
@@ -130,30 +129,39 @@ export default function EventPage() {
           style={{
             objectFit: 'cover',
             maxWidth: '600px',
+            borderRadius: 15
           }}
         />
+        <Typography variant='h4' align="center" fontWeight={600}>{event.artist}</Typography>
+
         <Box display="flex" flexDirection="column" gap={0.5}>
-          <Typography variant="h5" fontWeight={500}>
+          <Typography align="center" variant="h5" fontWeight={500}>
             {event.date}
           </Typography>
-          <Typography variant="h5" fontWeight={500}>
+          <Typography align="center" variant="h5" fontWeight={500}>
             {event.location}
           </Typography>
         </Box>
-        <Stack>
+        <Stack display="flex" flexDirection="row" alignItems="center" justifyContent="center" gap={2}>
+          <Avatar sx={{ width: 60, height: 60 }}></Avatar>
+          <Avatar sx={{ width: 60, height: 60 }}></Avatar>
+          <Avatar sx={{ width: 60, height: 60 }}></Avatar>
           <Button
-            variant='contained'
+            variant="contained"
             onClick={fetchAttendingUsers}
+            sx={{ alignSelf: 'center', height: 'auto' }} // Center the button vertically
           >
-            {attendanceCount} people are going
+            {attendanceCount} are going
           </Button>
         </Stack>
-        <Stack display="flex" flexDirection="row">
-          <Button variant="contained" color={isGoing ? 'error' : 'primary'} onClick={toggleGoing}>
+
+
+        <Stack display="flex" flexDirection="row" gap={2}>
+          <Button sx={{borderRadius: 3}} variant="contained" color={isGoing ? 'secondary' : 'primary'} onClick={toggleGoing}>
               {isGoing ? "I'M NOT GOING" : "I'M GOING!"}
           </Button>
-          <Button>GROUP CHAT</Button>
-          <Button onClick={handleSeatmap}>SEATMAP</Button>
+          <Button sx={{borderRadius: 3}} variant='contained' >GROUP CHAT</Button>
+          <Button sx={{borderRadius: 3}} variant='contained' onClick={handleSeatmap}>SEATMAP</Button>
         </Stack>
       </main>
 
