@@ -6,6 +6,7 @@ type EventData = {
   artist: string;
   location: string;
   date: string;
+  seatmap: string;
 };
 
 type Store = {

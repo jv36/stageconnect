@@ -21,6 +21,9 @@ interface RawConcert {
       localDate: string;
     };
   };
+  seatmap: {
+    staticUrl: string;
+  }
 }
 
 interface DisplayConcert {
@@ -29,6 +32,7 @@ interface DisplayConcert {
   artist: string;
   location: string;
   date: string;
+  seatmap: string;
 }
 
 async function getConcerts(countryCode: string, page: number = 0, size: number = 10): Promise<RawConcert[]> {
@@ -37,6 +41,7 @@ async function getConcerts(countryCode: string, page: number = 0, size: number =
     const response = await axios.get(
       `https://app.ticketmaster.com/discovery/v2/events?classificationName=music&countryCode=${countryCode}&page=${page}&size=${size}&apikey=${apiKey}`
     );
+    console.log("data", response.data?._embedded?.events);
     return response.data?._embedded?.events || [];
   } catch (error) {
     console.error('Error fetching concerts:', error);
@@ -75,6 +80,7 @@ export default function Carousel({ countryCode }: { countryCode: string }) { // 
         artist: concert.name,
         location: concert._embedded?.venues?.[0]?.name || 'Location not available',
         date: concert.dates?.start?.localDate || 'Date not available',
+        seatmap: concert.seatmap.staticUrl
       }));
       setConcertData(formattedConcerts);
     }

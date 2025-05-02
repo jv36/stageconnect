@@ -16,6 +16,7 @@ interface CardProps {
     artist: string;
     location: string;
     date: string;
+    seatmap: string;
   };
 }
 

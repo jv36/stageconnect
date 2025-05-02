@@ -183,7 +183,7 @@ export default function PrimaryAppBar() {
             component="div"
             sx={{ display: { xs: 'none', sm: 'block' } }}
           >
-            MUI
+            StageConnect
           </Typography>
           <Search>
             <SearchIconWrapper>
