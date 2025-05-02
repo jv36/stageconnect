@@ -6,10 +6,10 @@ import InstagramIcon from '@mui/icons-material/Instagram';
 import FacebookIcon from '@mui/icons-material/Facebook';
 
 export default async function UserProfilePage({ params }: { params: { id: string } }) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   // Query the public metadata of a user by ID
-  const { data, error } = await (await supabase)
+  const { data, error } = await supabase // Removed the extra 'await' here
     .from('users') // assumes you mirror Supabase auth users into your own `users` table
     .select('id, email, display_name, description, twitter, instagram, facebook')
     .eq('id', params.id)
