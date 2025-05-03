@@ -11,6 +11,7 @@ import { User } from '@supabase/supabase-js'
 import XIcon from '@mui/icons-material/X';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import FacebookIcon from '@mui/icons-material/Facebook';
+import { logout } from '../login/actions'
 
 export default function PrivatePage() {
   const [user, setUser] = useState<User | null>(null)
@@ -110,6 +111,7 @@ export default function PrivatePage() {
           )}
       </Stack>
         <Button variant="contained" onClick={() => setOpen(true)}>EDIT</Button>
+        <Button variant="contained" onClick={logout} >Logout</Button>
 
         <Modal open={open} onClose={() => setOpen(false)}>
           <Box
