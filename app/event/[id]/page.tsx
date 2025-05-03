@@ -105,7 +105,8 @@ export default function EventPage() {
 
 
   if (!event) {
-    return <p>Loading or no event data available.</p>;
+    return <Typography align='center'>No data available for this event.
+    Please refresh or try to access it from other page.</Typography>;
   }
 
   const handleSeatmap = () => {
