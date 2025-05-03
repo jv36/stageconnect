@@ -85,6 +85,7 @@ export default function PrivatePage() {
         <Stack direction="row" spacing={1}>
           {twitter && (
               <IconButton
+                  sx={{ backgroundColor: '#FF9A00'}}
                   href={`https://x.com/${twitter}`}
                   target="_blank"
               >
@@ -93,6 +94,7 @@ export default function PrivatePage() {
           )}
           {instagram && (
               <IconButton
+                  sx={{ backgroundColor: '#FF9A00'}}
                   href={`https://instagram.com/${instagram}`}
                   target="_blank"
 
@@ -102,6 +104,7 @@ export default function PrivatePage() {
           )}
           {facebook && (
               <IconButton
+                  sx={{ backgroundColor: '#FF9A00'}}
                   href={`https://facebook.com/${facebook}`}
                   target="_blank"
 

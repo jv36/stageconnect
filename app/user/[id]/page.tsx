@@ -11,7 +11,7 @@ export default async function UserProfilePage({params} : any) {
   // Query the public metadata of a user by ID
   const { data, error } = await supabase
     .from('users')
-    .select('id, email, display_name, description, twitter, instagram, facebook')
+    .select('id, email, display_name, description, twitter, instagram, facebook, created_at')
     .eq('id', params.id)
     .single();
 
@@ -28,10 +28,18 @@ export default async function UserProfilePage({params} : any) {
           <Typography variant="h6" fontWeight={400}>
             {data.description || "This user hasn't written a bio yet."}
           </Typography>
+          <Typography variant="h6" fontWeight={300}>
+            Member since {new Date(data.created_at).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })}
+          </Typography>
         </Box>
         <Stack direction="row" spacing={1}>
           {data.twitter && (
               <IconButton
+                  sx={{ backgroundColor: '#FF9A00'}}
                   href={`https://x.com/${data.twitter}`}
                   target="_blank"
               >
@@ -40,6 +48,8 @@ export default async function UserProfilePage({params} : any) {
           )}
           {data.instagram && (
               <IconButton
+                  sx={{ backgroundColor: '#FF9A00'}}
+                  color='secondary'
                   href={`https://instagram.com/${data.instagram}`}
                   target="_blank"
 
@@ -49,6 +59,7 @@ export default async function UserProfilePage({params} : any) {
           )}
           {data.facebook && (
               <IconButton
+                  sx={{ backgroundColor: '#FF9A00'}}
                   href={`https://facebook.com/${data.facebook}`}
                   target="_blank"
 
