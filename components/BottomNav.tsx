@@ -6,6 +6,7 @@ import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import HomeIcon from '@mui/icons-material/Home';
+import StarIcon from '@mui/icons-material/Star';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { useEffect } from 'react';
 
@@ -54,6 +55,12 @@ export default function BottomNav() {
               color: 'primary.contrastText', // color for selected
             },
           }} label="My Concerts" value="favorites" icon={<FavoriteIcon />} />
+          <BottomNavigationAction sx={{
+            color: 'secondary.main',
+            '&.Mui-selected': {
+              color: 'primary.contrastText', // color for selected
+            },
+          }} label="Gig Finder" value="recom" icon={<StarIcon />} />
         <BottomNavigationAction sx={{
             color: 'secondary.main',
             '&.Mui-selected': {

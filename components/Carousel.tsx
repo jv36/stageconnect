@@ -34,27 +34,40 @@ interface DisplayConcert {
   seatmap: string;
 }
 
-async function getConcerts(countryCode: string, page: number = 0, size: number = 10): Promise<RawConcert[]> {
+interface SliderCarouselProps {
+  requestParams: Record<string, string | number | undefined>;
+}
+
+async function getConcerts(params: Record<string, string | number | undefined>, page: number = 0, size: number = 5): Promise<RawConcert[]> {
   try {
     const apiKey = process.env.NEXT_PUBLIC_TICKETMASTER_API_KEY;
-    const response = await axios.get(
-      `https://app.ticketmaster.com/discovery/v2/events?classificationName=music&countryCode=${countryCode}&page=${page}&size=${size}&apikey=${apiKey}`
-    );
-    console.log('data', response.data?._embedded?.events);
+    const baseUrl = `https://app.ticketmaster.com/discovery/v2/events?apikey=${apiKey}&page=${page}&size=${size}`;
+    const queryParams = new URLSearchParams();
+
+    for (const key in params) {
+      if (params[key] !== undefined) {
+        queryParams.append(key, params[key]!.toString());
+      }
+    }
+
+    const apiUrl = `${baseUrl}&${queryParams.toString()}`;
+
+    const response = await axios.get(apiUrl);
+    console.log('data for', params, response.data?._embedded?.events);
     return response.data?._embedded?.events || [];
   } catch (error) {
-    console.error('Error fetching concerts:', error);
+    console.error('Error fetching concerts for', params, error);
     return [];
   }
 }
 
-export default function SliderCarousel({ countryCode }: { countryCode: string }) {
+export default function SliderCarousel({ requestParams }: SliderCarouselProps) {
   const [concertData, setConcertData] = useState<DisplayConcert[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     async function fetchInitialConcerts() {
-      const concerts = await getConcerts(countryCode, 0, 5);
+      const concerts = await getConcerts(requestParams, 0, 10);
       const formattedConcerts: DisplayConcert[] = concerts.map((concert) => ({
         id: concert.id,
         image: concert.images?.[0]?.url || '/images/concerto.jpg',
@@ -67,7 +80,7 @@ export default function SliderCarousel({ countryCode }: { countryCode: string })
     }
 
     fetchInitialConcerts();
-  }, [countryCode]);
+  }, [requestParams]); // Re-fetch when requestParams change
 
   useEffect(() => {
     const preloadImages = async () => {

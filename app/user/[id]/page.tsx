@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server';
 import { notFound } from 'next/navigation';
-import { Avatar, Box, Button, Stack, Typography } from '@mui/material';
+import { Avatar, Box, Button, IconButton, Stack, Typography } from '@mui/material';
 import XIcon from '@mui/icons-material/X';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import FacebookIcon from '@mui/icons-material/Facebook';
@@ -29,41 +29,34 @@ export default async function UserProfilePage({params} : any) {
             {data.description || "This user hasn't written a bio yet."}
           </Typography>
         </Box>
-        <Stack>
+        <Stack direction="row" spacing={1}>
           {data.twitter && (
-            <Button
-              href={`https://x.com/${data.twitter}`}
-              target="_blank"
-              startIcon={<XIcon />}
-              variant="outlined"
-              sx={{ marginRight: 1 }}
-            >
-              Twitter
-            </Button>
+              <IconButton
+                  href={`https://x.com/${data.twitter}`}
+                  target="_blank"
+              >
+                  <XIcon sx={{fontSize: 30, color: '#1B003A'}}/>
+              </IconButton>
           )}
           {data.instagram && (
-            <Button
-              href={`https://instagram.com/${data.instagram}`}
-              target="_blank"
-              startIcon={<InstagramIcon />}
-              variant="outlined"
-              sx={{ marginRight: 1 }}
-            >
-              Instagram
-            </Button>
+              <IconButton
+                  href={`https://instagram.com/${data.instagram}`}
+                  target="_blank"
+
+              >
+                  <InstagramIcon sx={{fontSize: 30, color: '#1B003A'}}/>
+              </IconButton>
           )}
           {data.facebook && (
-            <Button
-              href={`https://facebook.com/${data.facebook}`}
-              target="_blank"
-              startIcon={<FacebookIcon />}
-              variant="outlined"
-              sx={{ marginRight: 1 }}
-            >
-              Facebook
-            </Button>
+              <IconButton
+                  href={`https://facebook.com/${data.facebook}`}
+                  target="_blank"
+
+              >
+                  <FacebookIcon sx={{fontSize: 30, color: '#1B003A'}}/>
+              </IconButton>
           )}
-        </Stack>
+      </Stack>
       </main>
     </div>
   );

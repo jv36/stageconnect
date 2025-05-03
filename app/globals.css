@@ -34,11 +34,16 @@ body {
   font-family: 'Roboto Condensed', sans-serif;
 }
 
+.stage-logo {
+  font-family: 'Bowlby One', sans-serif !important;
+}
+
 .carousel-wrapper {
   max-width: 300px;
   margin: 0 auto;
   position: relative;
   padding-bottom: 20px;
+  overflow-x: hidden;
 }
 
 .dots {
